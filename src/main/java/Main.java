@@ -1,5 +1,8 @@
+import sun.text.normalizer.ReplaceableUCharacterIterator;
+
 import java.io.*;
 import java.sql.*;
+import java.util.Collections;
 import java.util.TreeSet;
 
 public class Main {
@@ -31,8 +34,14 @@ public class Main {
                             String.format("delete from dict where id =%s", resultSet.getString(1))
                     );
                 }
+
                 if (treeSet.size() > 1)
-                    System.out.println(treeSet);
+//                    System.out.println(treeSet);
+                System.out.println(treeSet.toString().replaceAll("\\[", " ")
+                        .replaceAll(",", " ")
+                        .replaceAll("]", " "));
+
+
                 treeSet.clear();
 
                 resultSet.close();
