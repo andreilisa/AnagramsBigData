@@ -1,8 +1,5 @@
-import sun.text.normalizer.ReplaceableUCharacterIterator;
-
 import java.io.*;
 import java.sql.*;
-import java.util.Collections;
 import java.util.TreeSet;
 
 public class Main {
@@ -25,7 +22,7 @@ public class Main {
                 ResultSet resultSet = statement.executeQuery(String.format("with context as (\n" +
                         "    select id, word, array(select distinct unnest(regexp_split_to_array(word, '')) x order by x) as charset from dict\n" +
                         ")\n" +
-                        "select id, word from context where charset=(select charset from context where word='%s' limit 1)", strCurrentLine));
+                        "select id, word from context where charset=(select charset from context where word='%s' limit 1) and length(word) = length('%s')", strCurrentLine, strCurrentLine));
 
                 while (resultSet.next()) {
                     treeSet.add(resultSet.getString(2));
@@ -36,12 +33,9 @@ public class Main {
                 }
 
                 if (treeSet.size() > 1)
-//                    System.out.println(treeSet);
-                System.out.println(treeSet.toString().replaceAll("\\[", " ")
-                        .replaceAll(",", " ")
-                        .replaceAll("]", " "));
-
-
+                    System.out.println(treeSet.toString().replaceAll("\\[", " ")
+                            .replaceAll(",", " ")
+                            .replaceAll("]", " "));
                 treeSet.clear();
 
                 resultSet.close();
