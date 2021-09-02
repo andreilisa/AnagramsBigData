@@ -20,7 +20,7 @@ public class Main {
             while ((strCurrentLine = objReader.readLine()) != null) {
 
                 ResultSet resultSet = statement.executeQuery(String.format("with context as (\n" +
-                        "    select id, word, array(select distinct unnest(regexp_split_to_array(word, '')) x order by x) as charset from dict\n" +
+                        "    select id, word, array(select distinct unnest(regexp_split_to_array(word, '')) x order by x) as charset from dictionary\n" +
                         ")\n" +
                         "select id, word from context where charset=(select charset from context where word='%s' limit 1) and length(word) = length('%s')", strCurrentLine, strCurrentLine));
 
@@ -28,9 +28,11 @@ public class Main {
                     treeSet.add(resultSet.getString(2));
                     Statement statement1 = connection.createStatement();
                     statement1.executeUpdate(
-                            String.format("delete from dict where id =%s", resultSet.getString(1))
+                            String.format("delete from dictionary where id =%s", resultSet.getString(1))
+
                     );
                 }
+                connection.commit();
 
                 if (treeSet.size() > 1)
                     System.out.println(treeSet.toString().replaceAll("\\[", " ")
@@ -41,10 +43,10 @@ public class Main {
                 resultSet.close();
             }
 
-
         } catch (SQLException | IOException throwable) {
             throwable.printStackTrace();
         }
+
 
     }
 }
